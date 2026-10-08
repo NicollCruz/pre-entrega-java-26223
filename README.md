@@ -1,4 +1,4 @@
-# Pre-entrega JAVA
+# Pre-entrega JAVA - Nicoll Cruz Villegas
 ### Objetivo del proyecto
 Una empresa necesita desarrollar un sistema que permita administrar los artículos que
 comercializa.
