@@ -6,8 +6,8 @@ import java.util.Scanner;
 import com.techlab.articulo.model.Articulo;
 import com.techlab.articulo.model.ArticuloAlimenticio;
 import com.techlab.articulo.model.ArticuloElectronico;
-//import com.techlab.articulo.model.ArticuloAlimenticio;
-//import com.techlab.articulo.model.ArticuloElectronico;
+import com.techlab.articulo.model.ArticuloAlimenticio;
+import com.techlab.articulo.model.ArticuloElectronico;
 import com.techlab.articulo.model.Categoria;
 
 
@@ -46,16 +46,16 @@ public class App {
                     listarArticulos(articulos);
                     break;
                 case 3:
-                    //consultarArticulo(scanner, articulos);
+                    consultarArticulo(scanner, articulos);
                     break;
                 case 4:
-                    //modificarArticulo(scanner, articulos, categorias);
+                    modificarArticulo(scanner, articulos, categorias);
                     break;
                 case 5:
                     eliminarArticulo(scanner, articulos);
                     break;
                 case 6:
-                    //listarCategorias(categorias);
+                    listarCategorias(categorias);
                     break;
                 case 0:
                     System.out.println("\nSaliendo del sistema. ¡Hasta luego!");
@@ -96,13 +96,6 @@ public class App {
             }
 
             System.out.println("Error: la categoría no existe.");
-        }
-    }
-    public static void listarCategorias(ArrayList<Categoria> categorias) {
-        System.out.println("\n--- CATEGORÍAS DISPONIBLES ---");
-
-        for (Categoria categoria : categorias) {
-            System.out.println(categoria);
         }
     }
     
@@ -248,6 +241,77 @@ public class App {
         }
     }
 
+    //Opcion 3: Consultar artículo
+    public static void consultarArticulo(Scanner scanner, ArrayList<Articulo> articulos) {
+        System.out.println("\n--- CONSULTAR ARTÍCULO ---");
+
+        if (articulos.isEmpty()) {
+            System.out.println("No hay artículos cargados.");
+            return;
+        }
+
+        int codigo = leerEntero(scanner, "Ingrese el código del artículo a consultar: ");
+
+        Articulo articulo = buscarArticuloPorCodigo(articulos, codigo);
+
+        if (articulo == null) {
+            System.out.println("El artículo no existe.");
+            return;
+        }
+
+        System.out.println("Artículo encontrado:");
+        System.out.println(articulo);
+        System.out.println("Detalle específico: " + articulo.getDetalleEspecifico());
+    }
+
+    //Opcion 4: Modificar artículo
+    public static void modificarArticulo(Scanner scanner,ArrayList<Articulo> articulos,ArrayList<Categoria> categorias)
+    {
+        System.out.println("\n--- MODIFICAR ARTÍCULO ---");
+
+        if (articulos.isEmpty()) {
+            System.out.println("No hay artículos cargados.");
+            return;
+        }
+
+        int codigo = leerEntero(scanner, "Ingrese el código del artículo a modificar: ");
+
+        Articulo articulo = buscarArticuloPorCodigo(articulos, codigo);
+
+        if (articulo == null) {
+            System.out.println("El artículo no existe.");
+            return;
+        }
+
+        String nuevoNombre = leerTextoNoVacio(scanner, "Ingrese el nuevo nombre del artículo: ");
+        double nuevoPrecio = leerDoubleNoNegativo(scanner, "Ingrese el nuevo precio del artículo: ");
+
+        listarCategorias(categorias);
+        Categoria nuevaCategoria = pedirCategoriaExistente(scanner, categorias);
+
+        articulo.setNombre(nuevoNombre);
+        articulo.setPrecio(nuevoPrecio);
+        articulo.setCategoria(nuevaCategoria);
+
+        // Si el artículo real es electrónico, permitimos modificar la garantía.
+        if (articulo instanceof ArticuloElectronico) {
+            ArticuloElectronico electronico = (ArticuloElectronico) articulo;
+
+            int nuevaGarantia = leerEnteroNoNegativo(scanner, "Ingrese la nueva garantía en meses: ");
+            electronico.setGarantiaMeses(nuevaGarantia);
+        }
+
+        // Si el artículo real es alimenticio, permitimos modificar los días para vencimiento.
+        if (articulo instanceof ArticuloAlimenticio) {
+            ArticuloAlimenticio alimenticio = (ArticuloAlimenticio) articulo;
+
+            int nuevosDias = leerEnteroNoNegativo(scanner, "Ingrese los nuevos días para vencimiento: ");
+            alimenticio.setDiasParaVencimiento(nuevosDias);
+        }
+
+        System.out.println("Artículo modificado correctamente.");
+    }
+
     //Opcion 5: Eliminar artículo
     public static void eliminarArticulo(Scanner scanner, ArrayList<Articulo> articulos) {
         System.out.println("\n--- ELIMINAR ARTÍCULO ---");
@@ -270,6 +334,15 @@ public class App {
         System.out.println("Artículo eliminado correctamente.");
     }
 
+    //Opcion 6: Listar categorías
+    public static void listarCategorias(ArrayList<Categoria> categorias)
+    {
+        System.out.println("\n--- CATEGORÍAS DISPONIBLES ---");
+
+        for (Categoria categoria : categorias) {
+            System.out.println(categoria);
+        }
+    }
 
 }
 
